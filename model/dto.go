@@ -11,7 +11,8 @@ type Member struct {
 type Post struct {
 	ID       int       `json:"id"`
 	MemberID int       `json:"member_id"`
-	Body     []byte    `json:"body"`
+	Title    string    `json:"title"`
+	Contents string    `json:"contents"`
 	Datetime time.Time `json:"datetime"`
 }
 
@@ -25,6 +26,6 @@ type Comment struct {
 	ID       int       `json:"id"`
 	PostID   int       `json:"post_id"`
 	MemberID int       `json:"member_id"`
-	Body     string    `json:"body"`
+	Contents string    `json:"contents"`
 	Datetime time.Time `json:"datetime"`
 }
