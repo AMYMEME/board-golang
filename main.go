@@ -26,5 +26,11 @@ func setupRouter() *gin.Engine {
 	r.DELETE("/member/:id", controller.DeleteMember)
 	r.PUT("/member/:id", controller.UpdateMember)
 
+	r.GET("/posts", controller.GetAllPosts)
+	r.POST("/post", controller.AddPost)
+	r.GET("/post/:id", controller.GetPost)
+	r.DELETE("/post/:id", controller.DeletePost)
+	r.PUT("/post/:id", controller.UpdatePost)
+
 	return r
 }
