@@ -29,8 +29,14 @@ func setupRouter() *gin.Engine {
 	r.GET("/posts", controller.GetAllPosts)
 	r.POST("/post", controller.AddPost)
 	r.GET("/post/:id", controller.GetPost)
+	r.GET("/post/:id/comments", controller.GetAllCommentsByPostId)
+	r.POST("/post/:id/comment", controller.AddComment)
 	r.DELETE("/post/:id", controller.DeletePost)
 	r.PUT("/post/:id", controller.UpdatePost)
+
+	r.DELETE("/comment/:id", controller.DeleteComment)
+	r.PATCH("/comment/:id", controller.UpdateComment)
+	//댓글은 내용밖에 수정할 것이 없음
 
 	return r
 }

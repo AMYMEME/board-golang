@@ -73,8 +73,8 @@ func GetAllPosts(c *gin.Context) {
 	}
 	res, err := DB.GetAllPosts()
 	if err != nil {
-		logger.Errorw("ERROR", "body", err.Error(), "status_code", http.StatusInternalServerError)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		logger.Errorw("ERROR", "body", err.Error(), "status_code", http.StatusBadRequest)
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 	logger.Infow("RESPONSE", "body", res, "status_code", http.StatusOK)
@@ -139,4 +139,30 @@ func UpdatePost(c *gin.Context) {
 	}
 	logger.Infow("RESPONSE", "body", fmt.Sprintf("/post/%d", id), "status_code", http.StatusOK)
 	c.JSON(http.StatusOK, fmt.Sprintf("/post/%d", id))
+}
+
+func GetAllCommentsByPostId(c *gin.Context) {
+	logger.Infow("REQUEST", "method", http.MethodGet, "url", c.Request.URL)
+
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		logger.Errorw("ERROR", "body", errors.New("path parameter is invalid").Error(),
+			"status_code", http.StatusBadRequest)
+		c.JSON(http.StatusBadRequest, gin.H{"error": "path parameter is invalid"})
+		return
+	}
+
+	if err := connectionCheck(DB.MyDB); err != nil {
+		logger.Errorw("ERROR", "body", err.Error(), "status_code", http.StatusInternalServerError)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	res, err := DB.GetAllCommentsByPostId(id)
+	if err != nil {
+		logger.Errorw("ERROR", "body", err.Error(), "status_code", http.StatusBadRequest)
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	logger.Infow("RESPONSE", "body", res, "status_code", http.StatusOK)
+	c.JSON(http.StatusOK, res)
 }
