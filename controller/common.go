@@ -17,7 +17,7 @@ var DB = repository.DBConfig{
 }
 
 func setupDB() *sql.DB {
-	db, err := sql.Open("mysql", "root:root@(127.0.0.1:3306)/board")
+	db, err := sql.Open("mysql", "root:root@(127.0.0.1:3306)/board?parseTime=true")
 	if err != nil {
 		logger.Errorf("Fail DB connection")
 	}
@@ -28,7 +28,6 @@ func setupDB() *sql.DB {
 func connectionCheck(db *sql.DB) error {
 	if db == nil {
 		err := errors.New("Fail sql driver connection")
-		logger.Errorf(err.Error())
 		return err
 	}
 	return nil
