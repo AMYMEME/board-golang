@@ -13,12 +13,17 @@ import (
 func AddMember(c *gin.Context) {
 	var request model.Member
 	if err := c.ShouldBindJSON(&request); err != nil {
-		logger.Errorf(errors.Wrap(err, "Fail request body bind to member").Error())
+		logger.Infow("REQUEST", "method", http.MethodPost, "url", c.Request.URL)
+		logger.Errorw("ERROR", "body", errors.New("Fail request body bind to member").Error(),
+			"status_code", http.StatusBadRequest)
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Fail request body bind to member"})
 		return
 	}
+	logger.Infow("REQUEST", "method", http.MethodPost, "url", c.Request.URL, "body", request)
+
 	if err := connectionCheck(DB.MyDB); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err})
+		logger.Errorw("ERROR", "body", err.Error(), "status_code", http.StatusInternalServerError)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
@@ -27,94 +32,117 @@ func AddMember(c *gin.Context) {
 		oauth2
 	*/
 
-	autoID := 2
-	res := DB.AddMember(autoID, request.Name)
-	if res != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": res})
+	autoID := 1
+	ID, err := DB.AddMember(autoID, request.Name)
+	if err != nil {
+		logger.Errorw("ERROR", "body", err.Error(), "status_code", http.StatusBadRequest)
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"result": fmt.Sprintf("/member/%d", autoID)})
+	logger.Infow("RESPONSE", "body", fmt.Sprintf("/member/%d", ID), "status_code", http.StatusOK)
+	c.JSON(http.StatusOK, fmt.Sprintf("/member/%d", ID))
 }
 
 func GetMember(c *gin.Context) {
+	logger.Infow("REQUEST", "method", http.MethodGet, "url", c.Request.URL)
+
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
-		logger.Error(errors.Wrap(err, "path parameter is invalid"))
+		logger.Errorw("ERROR", "body", errors.New("path parameter is invalid").Error(),
+			"status_code", http.StatusBadRequest)
 		c.JSON(http.StatusBadRequest, gin.H{"error": "path parameter is invalid"})
 		return
 	}
 
 	if err := connectionCheck(DB.MyDB); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err})
+		logger.Errorw("ERROR", "body", err.Error(), "status_code", http.StatusInternalServerError)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 	response, err := DB.GetMember(id)
 	if err != nil {
+		logger.Errorw("ERROR", "body", err.Error(), "status_code", http.StatusBadRequest)
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
+	logger.Infow("RESPONSE", "body", response, "status_code", http.StatusOK)
 	c.JSON(http.StatusOK, response)
 }
 
 func GetAllMembers(c *gin.Context) {
+	logger.Infow("REQUEST", "method", http.MethodGet, "url", c.Request.URL)
+
 	if err := connectionCheck(DB.MyDB); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err})
+		logger.Errorw("ERROR", "body", err.Error(), "status_code", http.StatusInternalServerError)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 	res, err := DB.GetAllMembers()
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": res})
+		logger.Errorw("ERROR", "body", err.Error(), "status_code", http.StatusInternalServerError)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-
-	c.JSON(http.StatusOK, gin.H{"result": res})
+	logger.Infow("RESPONSE", "body", res, "status_code", http.StatusOK)
+	c.JSON(http.StatusOK, res)
 }
 
 func DeleteMember(c *gin.Context) {
+	logger.Infow("REQUEST", "method", http.MethodDelete, "url", c.Request.URL)
+
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
-		logger.Error(errors.Wrap(err, "path parameter is invalid"))
+		logger.Errorw("ERROR", "body", errors.New("path parameter is invalid").Error(),
+			"status_code", http.StatusBadRequest)
 		c.JSON(http.StatusBadRequest, gin.H{"error": "path parameter is invalid"})
 		return
 	}
 
 	if err := connectionCheck(DB.MyDB); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err})
+		logger.Errorw("ERROR", "body", err.Error(), "status_code", http.StatusInternalServerError)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
 	if err := DB.DeleteMember(id); err != nil {
+		logger.Errorw("ERROR", "body", err.Error(), "status_code", http.StatusBadRequest)
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
+	logger.Infow("RESPONSE", "status_code", http.StatusOK)
 	c.JSON(http.StatusNoContent, gin.H{})
 }
 
 func UpdateMember(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
-		logger.Error(errors.Wrap(err, "path parameter is invalid"))
+		logger.Infow("REQUEST", "method", http.MethodPut, "url", c.Request.URL)
+		logger.Errorf("ERROR", "body", errors.New("path parameter is invalid").Error(), "status_code", http.StatusBadRequest)
 		c.JSON(http.StatusBadRequest, gin.H{"error": "path parameter is invalid"})
 		return
 	}
 
 	var request model.Member
 	if err := c.ShouldBindJSON(&request); err != nil {
-		logger.Errorf(errors.Wrap(err, "Fail request body bind to member").Error())
+		logger.Infow("REQUEST", "method", http.MethodPut, "url", c.Request.URL)
+		logger.Errorf("ERROR", "body", errors.New("Fail request body bind to member").Error(), "status_code", http.StatusBadRequest)
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Fail request body bind to member"})
 		return
 	}
+	logger.Infow("REQUEST", "method", http.MethodPut, "url", c.Request.URL, "body", request)
 
 	if err := connectionCheck(DB.MyDB); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err})
+		logger.Errorw("ERROR", "body", err.Error(), "status_code", http.StatusInternalServerError)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
 	if err := DB.UpdateMember(id, request); err != nil {
+		logger.Errorw("ERROR", "body", err.Error(), "status_code", http.StatusBadRequest)
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-
-	c.JSON(http.StatusOK, gin.H{"result": fmt.Sprintf("/member/%d", id)})
+	logger.Infow("RESPONSE", "body", fmt.Sprintf("/member/%d", id), "status_code", http.StatusOK)
+	c.JSON(http.StatusOK, fmt.Sprintf("/member/%d", id))
 }
