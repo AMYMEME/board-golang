@@ -1,37 +1,44 @@
 package repository
 
 import (
-	"database/sql"
-
+	"github.com/AMYMEME/board-golang/model"
 	"github.com/pkg/errors"
 )
 
-func AddProviderInfo(provider string, providerID string) int {
-	res, err := DB.Exec("INSERT INTO board.oauth (provider, provider_id) VALUES (?, ?)", provider, providerID)
+func (d *DBConfig) AddProviderInfo(oauth model.Oauth) (int, error) {
+	res, err := d.MyDB.Exec("INSERT INTO board.oauth (provider, provider_id) VALUES (?, ?)", oauth.Provider, oauth.ProviderID)
+
 	if err != nil {
-		Logger.Errorf(errors.Wrap(err, "Fail sql query").Error())
+		err := errors.Wrap(err, "Fail sql query by Invalid Input")
+		return 0, err
 	}
-	id, err := res.LastInsertId()
+
+	ID, err := res.LastInsertId()
 	if err != nil {
-		Logger.Errorf(errors.Wrap(err, "Fail getting added row's id").Error())
+		err := errors.Wrap(err, "Fail getting added row's id")
+		return 0, err
 	}
-	defer DB.Close()
-	return int(id)
+	return int(ID), nil
 }
 
-func GetProviderInfo(provider string, providerID string) (int, error) {
-	if DB == nil {
-		err := errors.New("Fail sql driver connection")
-		Logger.Errorf(err.Error())
-		return 0, err
+func (d *DBConfig) GetProviderInfo(ID int) (model.Oauth, error) {
+	var oauth model.Oauth
+	err := d.MyDB.QueryRow("SELECT id, provider, provider_id FROM board.oauth WHERE id = ?", ID).
+		Scan(&oauth.ID, &oauth.Provider, &oauth.ProviderID)
+
+	if err != nil {
+		err := errors.Wrap(err, "There is no such provider info")
+		return model.Oauth{}, err
 	}
-	var autoID int
-	err := DB.QueryRow("SELECT id FROM board.oauth WHERE provider = ? and provider_id = ?", provider, providerID).Scan(&autoID)
-	if err == sql.ErrNoRows {
-		err := errors.New("There is no such Provider Info")
-		Logger.Errorf(err.Error())
-		return 0, err
+	return oauth, nil
+}
+
+func (d *DBConfig) CheckProviderInfoExists(oauth model.Oauth) bool {
+	err := d.MyDB.QueryRow("SELECT 1 FROM board.oauth WHERE provider = ? AND provider_id = ?", oauth.Provider, oauth.ProviderID).
+		Scan()
+
+	if err != nil {
+		return false
 	}
-	defer DB.Close()
-	return autoID, nil
+	return true
 }
