@@ -1,8 +1,11 @@
 package main
 
 import (
+	"os"
+
 	"github.com/AMYMEME/board-golang/config"
 	"github.com/AMYMEME/board-golang/controller"
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/pkg/errors"
 )
@@ -10,15 +13,19 @@ import (
 var logger = config.GetLogger()
 
 func main() {
+	os.Setenv("PORT", "8090")
 	r := setupRouter()
 	if err := r.Run(); err != nil {
 		logger.Errorf(errors.Wrap(err, "Fail gin engine start").Error())
 	} //localhost:8080
+
 	defer controller.DB.MyDB.Close()
 }
 
 func setupRouter() *gin.Engine {
 	r := gin.Default()
+
+	r.Use(cors.Default()) //All CORS permit
 
 	r.GET("/members", controller.GetAllMembers)
 	r.POST("/member", controller.AddMember)
