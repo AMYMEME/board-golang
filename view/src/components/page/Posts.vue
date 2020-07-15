@@ -5,21 +5,28 @@
       <div class="col-12">
 
         <b-card no-body>
-          <b-table striped hover @row-clicked="myRowClickHandler" id="post-table"
-                   :items="posts" :fields="fields"
-                   :per-page="perPage" :current-page="currentPage">
-            <!-- A custom formatted column -->
+          <b-table fixed striped hover @row-clicked="myRowClickHandler" id="post-table"
+                   :items="posts" :fields="fields" :per-page="perPage" :current-page="currentPage">
+            <template v-slot:table-colgroup="scope">
+              <col v-for="field in scope.fields"
+                   :key="field.key"
+                   :style="{ width: field.key === 'member_id' ? '50px' : (field.key === 'datetime'? '80px' : '180px') }"  >
+            </template>
             <template v-slot:cell(datetime)="data">
               <a>{{ formatDatetime(data.value) }}</a>
             </template>
           </b-table>
+
           <b-pagination
                   v-model="currentPage"
                   :total-rows="this.posts.length"
                   :per-page="perPage"
+                  align="center"
                   aria-controls="post-table">
           </b-pagination>
+
         </b-card>
+
       </div>
     </b-container>
     <b-button class="mt-3" href="/new/post">글쓰기</b-button>
@@ -31,7 +38,7 @@
     name: 'get-all-posts',
     data() {
       return {
-        perPage: 3,
+        perPage: 5,
         currentPage: 1,
         fields: [
           {
