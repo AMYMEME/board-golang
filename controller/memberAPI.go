@@ -28,9 +28,6 @@ func AddMember(c *gin.Context) {
 	}
 
 	// TODO : 아직 OAuth를 연결 못해서 그냥 AMYEMEME로만 멤버 추가..
-	/*
-		oauth2
-	*/
 
 	autoID := 1
 	ID, err := DB.AddMember(autoID, request.Name)
