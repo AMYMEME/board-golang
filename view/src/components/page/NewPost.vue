@@ -33,11 +33,11 @@
           title: this.form.title,
           contents: this.form.contents
         })
-                .then((res) => {
-                  location.replace(res.data)
-                })
                 .catch((err) => {
                   this.error = JSON.stringify(err);
+                })
+                .finally((res) => {
+                  location.href = '/posts';
                 });
       },
     }

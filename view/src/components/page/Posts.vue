@@ -6,7 +6,8 @@
 
         <b-card no-body>
           <b-table fixed striped hover @row-clicked="myRowClickHandler" id="post-table"
-                   :items="posts" :fields="fields" :per-page="perPage" :current-page="currentPage">
+                   :items="posts" :fields="fields" :sort-by=sortBy :sort-desc=sortDesc
+                   :per-page="perPage" :current-page="currentPage">
             <template v-slot:table-colgroup="scope">
               <col v-for="field in scope.fields"
                    :key="field.key"
@@ -38,6 +39,8 @@
     name: 'get-all-posts',
     data() {
       return {
+        sortBy: 'datetime',
+        sortDesc: true,
         perPage: 5,
         currentPage: 1,
         fields: [
