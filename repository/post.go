@@ -75,8 +75,8 @@ func (d *DBConfig) DeletePost(ID int) error {
 }
 
 func (d *DBConfig) UpdatePost(ID int, newPost model.Post) error {
-	res, err := d.MyDB.Exec("UPDATE board.post SET title = ?, contents = ?, datetime = ? WHERE id = ?",
-		newPost.Title, newPost.Contents, time.Now().Format("2006-01-02 15:04:05"), ID)
+	res, err := d.MyDB.Exec("UPDATE board.post SET title = ?, contents = ? WHERE id = ?",
+		newPost.Title, newPost.Contents, ID)
 
 	if err != nil {
 		err := errors.Wrap(err, "Fail sql query by Invalid Input")
