@@ -3,6 +3,7 @@ import VueRouter from 'vue-router'
 import Home from '../components/page/Home.vue'
 import Posts from "../components/page/Posts.vue"
 import NewPost from "../components/page/NewPost.vue"
+import UpdatePost from "../components/page/UpdatePost.vue"
 import Post from "../components/page/Post.vue"
 
 Vue.use(VueRouter)
@@ -22,6 +23,11 @@ Vue.use(VueRouter)
     path: '/new/post',
     name: 'NewPost',
     component: NewPost
+  },
+  {
+    path: '/post/:id/update',
+    name: 'UpdatePost',
+    component: UpdatePost
   },
   {
     path: '/post/:id',
