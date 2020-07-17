@@ -71,9 +71,6 @@
                 .catch((err) => {
                   this.error = JSON.stringify(err);
                 });
-      },
-      handleClickButton(){
-        this.visible = true;
       }
     }
   }

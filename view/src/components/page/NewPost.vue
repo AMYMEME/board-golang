@@ -6,6 +6,7 @@
         <b-form @submit="newPost">
           <b-form-input placeholder="title" id="title" v-model="form.title" required></b-form-input>
           <b-form-textarea placeholder="contents" class="mt-3" id="contents" v-model="form.contents" rows="16"required></b-form-textarea>
+          <b-button class="mt-3 mr-1" href="/posts" variant="outline-secondary">취소</b-button>
           <b-button class="mt-3" type="submit" variant="primary">게시물 등록</b-button>
         </b-form>
         </b-card>
@@ -33,12 +34,13 @@
           title: this.form.title,
           contents: this.form.contents
         })
+                .then((res)=> {
+                  location.replace(res.data);
+                })
                 .catch((err) => {
                   this.error = JSON.stringify(err);
+                  alert('에러가 발생했습니다 : '+this.error);
                 })
-                .finally((res) => {
-                  location.href = '/posts';
-                });
       },
     }
   }
