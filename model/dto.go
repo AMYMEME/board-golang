@@ -29,3 +29,8 @@ type Comment struct {
 	Contents string    `json:"contents"`
 	Datetime time.Time `json:"datetime"`
 }
+
+type Google struct {
+	Code        string `json:"code"`
+	RedirectURI string `json:"redirect_uri"`
+}

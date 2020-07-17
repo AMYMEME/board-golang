@@ -3,8 +3,8 @@ package main
 import (
 	"os"
 
+	"github.com/AMYMEME/board-golang/api"
 	"github.com/AMYMEME/board-golang/config"
-	"github.com/AMYMEME/board-golang/controller"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/pkg/errors"
@@ -19,7 +19,7 @@ func main() {
 		logger.Errorf(errors.Wrap(err, "Fail gin engine start").Error())
 	} //localhost:8080
 
-	defer controller.DB.MyDB.Close()
+	defer api.DB.MyDB.Close()
 }
 
 func setupRouter() *gin.Engine {
@@ -27,23 +27,26 @@ func setupRouter() *gin.Engine {
 
 	r.Use(cors.Default()) //All CORS permit
 
-	r.GET("/members", controller.GetAllMembers)
-	r.POST("/member", controller.AddMember)
-	r.GET("/member/:id", controller.GetMember)
-	r.DELETE("/member/:id", controller.DeleteMember)
-	r.PUT("/member/:id", controller.UpdateMember)
+	r.GET("/members", api.GetAllMembers)
+	r.POST("/member", api.AddMember)
+	r.GET("/member/:id", api.GetMember)
+	r.DELETE("/member/:id", api.DeleteMember)
+	r.PUT("/member/:id", api.UpdateMember)
 
-	r.GET("/posts", controller.GetAllPosts)
-	r.POST("/post", controller.AddPost)
-	r.GET("/post/:id", controller.GetPost)
-	r.GET("/post/:id/comments", controller.GetAllCommentsByPostId)
-	r.POST("/post/:id/comment", controller.AddComment)
-	r.DELETE("/post/:id", controller.DeletePost)
-	r.PUT("/post/:id", controller.UpdatePost)
+	r.GET("/posts", api.GetAllPosts)
+	r.POST("/post", api.AddPost)
+	r.GET("/post/:id", api.GetPost)
+	r.GET("/post/:id/comments", api.GetAllCommentsByPostId)
+	r.POST("/post/:id/comment", api.AddComment)
+	r.DELETE("/post/:id", api.DeletePost)
+	r.PUT("/post/:id", api.UpdatePost)
 
-	r.DELETE("/comment/:id", controller.DeleteComment)
-	r.PATCH("/comment/:id", controller.UpdateComment)
+	r.DELETE("/comment/:id", api.DeleteComment)
+	r.PATCH("/comment/:id", api.UpdateComment)
 	//댓글은 내용밖에 수정할 것이 없음
+
+	//for auth
+	r.POST("/auth/google", api.AuthGoogle)
 
 	return r
 }
