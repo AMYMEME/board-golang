@@ -78,7 +78,7 @@
         return datetime.slice(0, 10) + ' ' + datetime.slice(11, -4)
       },
       myRowClickHandler(record) {
-        location.href = '/post/'+record.id
+        window.location.href = '/post/'+record.id
       }
     }
   }

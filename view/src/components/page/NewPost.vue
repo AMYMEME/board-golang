@@ -35,11 +35,12 @@
           contents: this.form.contents
         })
                 .then((res)=> {
-                  location.replace(res.data);
+                  window.location.replace(res.data)
+                  alert('새 게시글을 등록했습니다')
                 })
                 .catch((err) => {
-                  this.error = JSON.stringify(err);
-                  alert('에러가 발생했습니다 : '+this.error);
+                  this.error = JSON.stringify(err)
+                  alert('에러가 발생했습니다 : '+this.error)
                 })
       },
     }

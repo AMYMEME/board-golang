@@ -44,7 +44,7 @@
           contents: this.form.contents
         })
                 .then((res) =>{
-                  location.replace(res.data);
+                  this.$router.push(res.data)
                 })
                 .catch((err) => {
                   this.error = JSON.stringify(err);

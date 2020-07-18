@@ -65,7 +65,7 @@
       },
       deletePost() {
         this.$axios.delete(`http://localhost:8090/post/${this.$route.params.id}`)
-                .then((res)=> {
+                .then(()=> {
                   location.replace('/posts');
                 })
                 .catch((err) => {

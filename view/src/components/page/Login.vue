@@ -22,24 +22,30 @@
     name: 'test',
     methods: {
       loginWithGoogle() {
+
         this.$gAuth.getAuthCode()
                 .then(authCode => {
-                  //on success
-                  return this.$axios.post('http://localhost:8090/auth/google', {
-                    code: authCode,
-                    redirect_uri: 'postmessage',
-                  })
+                  this.$store.dispatch('loginWithGoogle', {authCode})
+                          .then(() => this.redirect())
                 })
-                .then((res) => {
-                  console.log(res.data);
+                .catch(() => {
+                  alert('인증 코드를 가져오는 데에 에러가 발생했습니다: \n다시 시도해 주세요.')
                 })
-                .catch(err => {
-                  alert('에러가 발생했습니다: '+err+'\n다시 시도해 주세요.');
-                })
+      },
+      redirect() {
+        let redirectURI;
+        redirectURI = decodeURIComponent(getUrlParams().redirect);
+        if (redirectURI === 'undefined') {
+          this.$router.push('/');
+        } else {
+          this.$router.push(redirectURI)
+        }
       }
     }
   }
-  function f() {
-
+  function getUrlParams() {
+    var params = {};
+    window.location.search.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(str, key, value) { params[key] = value; });
+    return params;
   }
 </script>

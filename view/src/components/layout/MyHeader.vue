@@ -19,11 +19,12 @@
                     <b-nav-item href="/">Home</b-nav-item>
                     <b-nav-item href="/posts">Posts</b-nav-item>
 
-                    <b-nav-item-dropdown text="User" right>
+                    <b-nav-item-dropdown text="User" right v-if="this.$store.state.accessToken">
                         <b-dropdown-item href="#">Account</b-dropdown-item>
                         <b-dropdown-item href="#">Settings</b-dropdown-item>
                         <b-dropdown-item @click="logout" >Logout</b-dropdown-item>
                     </b-nav-item-dropdown>
+                    <b-button v-if="!this.$store.state.accessToken" variant="outline-success" href="/login">LOGIN</b-button>
                 </b-navbar-nav>
             </b-navbar>
         </div>
@@ -33,18 +34,16 @@
 <script>
     export default {
         name: "MyHeader",
+        created() {
+
+        },
         methods: {
             logout() {
-                this.$gAuth.signOut()
-                    .then(res => {
-                        alert('로그아웃 되었습니다.');
-                        console.log(res);
-                    })
-                    .catch(err  => {
-                        this.error = JSON.stringify(err);
-                        alert('에러가 발생했습니다. \n다시 시도해 주세요.');
-                    })
-
+                this.$store.dispatch('logout')
+                    .then(() => {
+                        this.$router.push('/')
+                        .catch(()=>{});
+                    });
             }
         }
     }
