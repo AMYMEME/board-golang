@@ -6,14 +6,12 @@ import Posts from "../components/page/Posts.vue"
 import NewPost from "../components/page/NewPost.vue"
 import UpdatePost from "../components/page/UpdatePost.vue"
 import Post from "../components/page/Post.vue"
+import store from '../store'
 
 Vue.use(VueRouter)
 
 const requireAuth = () => (from, to, next) => {
-  console.log(from.headers.get('Authorization'));
-  const isAuthenticated = false
-
-  if (isAuthenticated) return next()
+  if (store.state.accessToken) return next()
   next({
     path: '/login',
     query: { redirect: from.fullPath }
