@@ -35,8 +35,7 @@ func AddComment(c *gin.Context) {
 		return
 	}
 
-	request.PostID = postID
-	if err := DB.AddComment(request); err != nil {
+	if err := DB.AddComment(postID, request); err != nil {
 		logger.Errorw("ERROR", "body", err.Error(), "status_code", http.StatusBadRequest)
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return

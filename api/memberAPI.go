@@ -10,36 +10,6 @@ import (
 	"github.com/pkg/errors"
 )
 
-func AddMember(c *gin.Context) {
-	var request model.Member
-	if err := c.ShouldBindJSON(&request); err != nil {
-		logger.Infow("REQUEST", "method", http.MethodPost, "url", c.Request.URL)
-		logger.Errorw("ERROR", "body", errors.New("Fail request body bind to member").Error(),
-			"status_code", http.StatusBadRequest)
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Fail request body bind to member"})
-		return
-	}
-	logger.Infow("REQUEST", "method", http.MethodPost, "url", c.Request.URL, "body", request)
-
-	if err := connectionCheck(DB.MyDB); err != nil {
-		logger.Errorw("ERROR", "body", err.Error(), "status_code", http.StatusInternalServerError)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
-	}
-
-	// TODO : 아직 OAuth를 연결 못해서 그냥 AMYEMEME로만 멤버 추가..
-
-	autoID := 1
-	ID, err := DB.AddMember(autoID, request.Name)
-	if err != nil {
-		logger.Errorw("ERROR", "body", err.Error(), "status_code", http.StatusBadRequest)
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-	logger.Infow("RESPONSE", "body", fmt.Sprintf("/member/%d", ID), "status_code", http.StatusOK)
-	c.JSON(http.StatusOK, fmt.Sprintf("/member/%d", ID))
-}
-
 func GetMember(c *gin.Context) {
 	logger.Infow("REQUEST", "method", http.MethodGet, "url", c.Request.URL)
 

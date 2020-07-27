@@ -13,3 +13,12 @@ Plz references `/view/package.json` for used vue libraries
 - [x] golang
 - [x] MySql (by docker)
 - [x] Vue.js 
+
+### Use
+1. `go build main.go`  
+2. `npm run serve`
+3. `localhost:8080` in browser
+4. DONE!  
+
+> golang default port is 8090.  
+> It can be set in main.go `os.Setenv("PORT", "8090")`

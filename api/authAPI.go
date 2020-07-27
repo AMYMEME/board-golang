@@ -34,14 +34,14 @@ func createToken(member model.Member) (string, error) {
 	return token.SignedString(mySigningKey)
 }
 
-func userInfoLogic(provider string, providerID string) (string, error) {
+func userInfoLogic(userInfo model.UserInfo) (string, error) {
 	if err := connectionCheck(DB.MyDB); err != nil {
 		return "", err
 	}
 
-	if DB.CheckProviderInfoExists(provider, providerID) {
+	if DB.CheckProviderInfoExists(userInfo.Provider, userInfo.Email) {
 		// exist => getUser
-		ID, err := DB.GetProviderInfo(provider, providerID)
+		ID, err := DB.GetProviderInfo(userInfo.Provider, userInfo.Email)
 		if err != nil {
 			return "", err
 		}
@@ -59,10 +59,33 @@ func userInfoLogic(provider string, providerID string) (string, error) {
 	}
 	// new register
 
+	ID, err := DB.AddProviderInfo(model.Oauth{
+		Provider:   userInfo.Provider,
+		ProviderID: userInfo.Email,
+	})
+	if err != nil {
+		return "", err
+	}
+
+	if err := DB.AddMember(ID, userInfo.Name); err != nil {
+		return "", err
+	}
+
+	member, err := DB.GetMember(ID)
+	if err != nil {
+		return "", err
+	}
+
+	token, err := createToken(member)
+	if err != nil {
+		return "", err
+	}
+
+	return token, nil
 }
 
 func AuthGoogle(c *gin.Context) {
-	var request model.Google
+	var request model.GoogleAuth
 	if err := c.ShouldBindJSON(&request); err != nil {
 		logger.Infow("REQUEST", "method", http.MethodPost, "url", c.Request.URL)
 		logger.Errorf("ERROR", "body", errors.New("Fail request body bind").Error(), "status_code", http.StatusBadRequest)
@@ -72,13 +95,15 @@ func AuthGoogle(c *gin.Context) {
 
 	logger.Infow("REQUEST", "method", http.MethodPost, "url", c.Request.URL, "body", request)
 
-	email, err := auth.GoogleAuth(request.Code, request.RedirectURI)
+	googleUserInfo, err := auth.GoogleAuth(request.Code)
 	if err != nil {
 		logger.Errorw("ERROR", "body", err.Error(), "status_code", http.StatusUnauthorized)
 		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
 		return
 	}
-	token, err := userInfoLogic("google", email)
+
+	googleUserInfo.Provider = "google"
+	token, err := userInfoLogic(googleUserInfo)
 
 	if err != nil {
 		logger.Errorw("ERROR", "body", err.Error(), "status_code", http.StatusUnauthorized)
