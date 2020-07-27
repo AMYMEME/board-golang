@@ -69,8 +69,8 @@ func (d *DBConfig) DeleteComment(ID int) error {
 }
 
 func (d *DBConfig) UpdateComment(ID int, newComment model.Comment) error {
-	res, err := d.MyDB.Exec("UPDATE board.comment SET contents = ?, datetime = ? WHERE id = ?",
-		newComment.Contents, time.Now().Format("2006-01-02 15:04:05"), ID)
+	res, err := d.MyDB.Exec("UPDATE board.comment SET contents = ? WHERE id = ?",
+		newComment.Contents, ID)
 
 	if err != nil {
 		err := errors.Wrap(err, "Fail sql query by Invalid Input")

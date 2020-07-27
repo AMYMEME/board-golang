@@ -21,20 +21,20 @@ func (d *DBConfig) AddProviderInfo(oauth model.Oauth) (int, error) {
 	return int(ID), nil
 }
 
-func (d *DBConfig) GetProviderInfo(ID int) (model.Oauth, error) {
-	var oauth model.Oauth
-	err := d.MyDB.QueryRow("SELECT id, provider, provider_id FROM board.oauth WHERE id = ?", ID).
-		Scan(&oauth.ID, &oauth.Provider, &oauth.ProviderID)
+func (d *DBConfig) GetProviderInfo(provider string, providerID string) (int, error) {
+	var ID int
+	err := d.MyDB.QueryRow("SELECT id FROM board.oauth WHERE provider = ? AND provider_id = ?", provider, providerID).
+		Scan(&ID)
 
 	if err != nil {
 		err := errors.Wrap(err, "There is no such provider info")
-		return model.Oauth{}, err
+		return 0, err
 	}
-	return oauth, nil
+	return ID, nil
 }
 
-func (d *DBConfig) CheckProviderInfoExists(oauth model.Oauth) bool {
-	err := d.MyDB.QueryRow("SELECT 1 FROM board.oauth WHERE provider = ? AND provider_id = ?", oauth.Provider, oauth.ProviderID).
+func (d *DBConfig) CheckProviderInfoExists(provider string, providerID string) bool {
+	err := d.MyDB.QueryRow("SELECT 1 FROM board.oauth WHERE provider = ? AND provider_id = ?", provider, providerID).
 		Scan()
 
 	if err != nil {

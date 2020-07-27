@@ -1,8 +1,13 @@
 package main
 
 import (
+	"os"
+	"time"
+
+	"github.com/gin-contrib/cors"
+
+	"github.com/AMYMEME/board-golang/api"
 	"github.com/AMYMEME/board-golang/config"
-	"github.com/AMYMEME/board-golang/controller"
 	"github.com/gin-gonic/gin"
 	"github.com/pkg/errors"
 )
@@ -10,33 +15,47 @@ import (
 var logger = config.GetLogger()
 
 func main() {
+	os.Setenv("PORT", "8090")
 	r := setupRouter()
 	if err := r.Run(); err != nil {
 		logger.Errorf(errors.Wrap(err, "Fail gin engine start").Error())
 	} //localhost:8080
-	defer controller.DB.MyDB.Close()
+
+	defer api.DB.MyDB.Close()
 }
 
 func setupRouter() *gin.Engine {
 	r := gin.Default()
 
-	r.GET("/members", controller.GetAllMembers)
-	r.POST("/member", controller.AddMember)
-	r.GET("/member/:id", controller.GetMember)
-	r.DELETE("/member/:id", controller.DeleteMember)
-	r.PUT("/member/:id", controller.UpdateMember)
+	r.Use(cors.New(cors.Config{
+		AllowOrigins:     []string{"http://localhost:8080"},
+		AllowMethods:     []string{"PUT", "PATCH", "POST", "GET", "OPTIONS", "DELETE"},
+		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"},
+		ExposeHeaders:    []string{"Content-Length"},
+		AllowCredentials: true,
+		MaxAge:           12 * time.Hour,
+	}))
 
-	r.GET("/posts", controller.GetAllPosts)
-	r.POST("/post", controller.AddPost)
-	r.GET("/post/:id", controller.GetPost)
-	r.GET("/post/:id/comments", controller.GetAllCommentsByPostId)
-	r.POST("/post/:id/comment", controller.AddComment)
-	r.DELETE("/post/:id", controller.DeletePost)
-	r.PUT("/post/:id", controller.UpdatePost)
+	r.GET("/members", api.GetAllMembers)
+	r.POST("/member", api.AddMember)
+	r.GET("/member/:id", api.GetMember)
+	r.DELETE("/member/:id", api.DeleteMember)
+	r.PUT("/member/:id", api.UpdateMember)
 
-	r.DELETE("/comment/:id", controller.DeleteComment)
-	r.PATCH("/comment/:id", controller.UpdateComment)
+	r.GET("/posts", api.GetAllPosts)
+	r.POST("/post", api.AddPost)
+	r.GET("/post/:id", api.GetPost)
+	r.GET("/post/:id/comments", api.GetAllCommentsByPostId)
+	r.POST("/post/:id/comment", api.AddComment)
+	r.DELETE("/post/:id", api.DeletePost)
+	r.PUT("/post/:id", api.UpdatePost)
+
+	r.DELETE("/comment/:id", api.DeleteComment)
+	r.PATCH("/comment/:id", api.UpdateComment)
 	//댓글은 내용밖에 수정할 것이 없음
+
+	//for auth
+	r.POST("/auth/google", api.AuthGoogle)
 
 	return r
 }

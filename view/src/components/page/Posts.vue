@@ -1,0 +1,89 @@
+<template>
+  <div>
+    <h3 class="mb-3">POST LIST</h3>
+    <b-container fluid>
+      <div class="col-12">
+
+        <b-card no-body>
+          <b-table fixed striped hover @row-clicked="myRowClickHandler" id="post-table"
+                   :items="posts" :fields="fields" :sort-by=sortBy :sort-desc=sortDesc
+                   :per-page="perPage" :current-page="currentPage">
+            <template v-slot:table-colgroup="scope">
+              <col v-for="field in scope.fields"
+                   :key="field.key"
+                   :style="{ width: field.key === 'member_id' ? '50px' : (field.key === 'datetime'? '80px' : '180px') }"  >
+            </template>
+            <template v-slot:cell(datetime)="data">
+              <a>{{ formatDatetime(data.value) }}</a>
+            </template>
+          </b-table>
+
+          <b-pagination
+                  v-model="currentPage"
+                  :total-rows="this.posts.length"
+                  :per-page="perPage"
+                  align="center"
+                  aria-controls="post-table">
+          </b-pagination>
+
+        </b-card>
+
+      </div>
+    </b-container>
+    <b-button class="mt-3" href="/new/post">글쓰기</b-button>
+  </div>
+</template>
+
+<script>
+  export default {
+    name: 'get-all-posts',
+    data() {
+      return {
+        sortBy: 'datetime',
+        sortDesc: true,
+        perPage: 5,
+        currentPage: 1,
+        fields: [
+          {
+            key: 'member_id',
+            label: '작성자',
+            sortable: false
+          },
+          {
+            key: 'title',
+            label: '제목',
+            sortable: false
+          },
+          {
+            key: 'datetime',
+            label: '일시',
+            sortable: true,
+          }
+        ],
+        posts: [],
+        error: ''
+      }
+    },
+    created() {
+      this.$axios.get('http://localhost:8090/posts')
+              .then((res) => {
+                this.posts = res.data;
+              })
+              .catch((err) => {
+                this.error = JSON.stringify(err);
+              });
+    },
+    methods: {
+      formatDatetime(datetime) {
+        return datetime.slice(0, 10) + ' ' + datetime.slice(11, -4)
+      },
+      myRowClickHandler(record) {
+        window.location.href = '/post/'+record.id
+      }
+    }
+  }
+</script>
+
+<style>
+
+</style>
