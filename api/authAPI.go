@@ -113,3 +113,34 @@ func AuthGoogle(c *gin.Context) {
 
 	c.JSON(http.StatusOK, token)
 }
+
+func AuthNaver(c *gin.Context) {
+
+	var request model.NaverAuth
+	if err := c.ShouldBindJSON(&request); err != nil {
+		logger.Infow("REQUEST", "method", http.MethodPost, "url", c.Request.URL)
+		logger.Errorf("ERROR", "body", errors.New("Fail request body bind").Error(), "status_code", http.StatusBadRequest)
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Fail request body bind"})
+		return
+	}
+
+	logger.Infow("REQUEST", "method", http.MethodPost, "url", c.Request.URL, "body", request)
+
+	/*googleUserInfo, err := auth.GoogleAuth(request.Code)
+	if err != nil {
+		logger.Errorw("ERROR", "body", err.Error(), "status_code", http.StatusUnauthorized)
+		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
+		return
+	}
+
+	googleUserInfo.Provider = "google"
+	token, err := userInfoLogic(googleUserInfo)
+
+	if err != nil {
+		logger.Errorw("ERROR", "body", err.Error(), "status_code", http.StatusUnauthorized)
+		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
+		return
+	}
+	*/
+	c.JSON(http.StatusOK, request)
+}
