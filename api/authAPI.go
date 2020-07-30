@@ -110,12 +110,11 @@ func AuthGoogle(c *gin.Context) {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
 		return
 	}
-
+	logger.Infow("RESPONSE", "body", token, "status_code", http.StatusOK)
 	c.JSON(http.StatusOK, token)
 }
 
 func AuthNaver(c *gin.Context) {
-
 	var request model.NaverAuth
 	if err := c.ShouldBindJSON(&request); err != nil {
 		logger.Infow("REQUEST", "method", http.MethodPost, "url", c.Request.URL)
@@ -126,21 +125,21 @@ func AuthNaver(c *gin.Context) {
 
 	logger.Infow("REQUEST", "method", http.MethodPost, "url", c.Request.URL, "body", request)
 
-	/*googleUserInfo, err := auth.GoogleAuth(request.Code)
+	naverUserInfo, err := auth.NaverAuth(request.TokenType, request.AccessToken)
 	if err != nil {
 		logger.Errorw("ERROR", "body", err.Error(), "status_code", http.StatusUnauthorized)
 		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
 		return
 	}
 
-	googleUserInfo.Provider = "google"
-	token, err := userInfoLogic(googleUserInfo)
+	token, err := userInfoLogic(naverUserInfo)
 
 	if err != nil {
 		logger.Errorw("ERROR", "body", err.Error(), "status_code", http.StatusUnauthorized)
 		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
 		return
 	}
-	*/
-	c.JSON(http.StatusOK, request)
+
+	logger.Infow("RESPONSE", "body", token, "status_code", http.StatusOK)
+	c.JSON(http.StatusOK, token)
 }

@@ -12,10 +12,10 @@ type UserInfo struct {
 }
 
 type NaverAuth struct {
-	AccessToken  string `json:"access_token"`
-	RefreshToken string `json:"refresh_token"`
-	TokenType    string `json:"token_type"`
-	ExpiresIn    string `json:"expires_in"`
+	AccessToken string `json:"access_token"`
+	State       string `json:"state"`
+	TokenType   string `json:"token_type"`
+	ExpiresIn   string `json:"expires_in"`
 }
 
 type NaverUserInfo struct {

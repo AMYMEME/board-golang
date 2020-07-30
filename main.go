@@ -55,7 +55,7 @@ func setupRouter() *gin.Engine {
 
 	//for auth
 	r.POST("/auth/google", api.AuthGoogle)
-	r.GET("/auth/naver", api.AuthNaver)
+	r.POST("/auth/naver", api.AuthNaver)
 
 	return r
 }

@@ -9,7 +9,6 @@
           <b-button pill block variant="outline-danger" @click="loginWithGoogle" >
             Login with Google</b-button>
           <div id="naverIdLogin" class="mt-4"></div>
-
         </b-card>
         </b-row>
       </div>
@@ -23,10 +22,10 @@
     data() {
       return {
         initiate: (comp) => {
-          var naverLogin = new naver.LoginWithNaverId(
+          const naverLogin = new naver.LoginWithNaverId(
                   {
                     clientId: `_HXiSkrZSfB9vq94TsZC`,
-                    callbackUrl: `http://localhost:8090/auth/naver`,
+                    callbackUrl: `http://localhost:8080/auth/naver`,
                     isPopup: false,
                     callbackHandle: true,
                     loginButton: {color: "green", type: 3, height: 50}
@@ -37,25 +36,18 @@
           window.addEventListener('load', function () {
             naverLogin.getLoginStatus(function (status) {
               if (status) {
-                /* 필수적으로 받아야하는 프로필 정보가 있다면 callback처리 시점에 체크 */
-                var email = naverLogin.user.getEmail();
                 var name = naverLogin.user.getNickName();
 
-                if( email === undefined || name === undefined) {
-                  alert("이메일은 필수정보입니다. 정보제공을 동의해주세요.");
+                if (name === undefined || naver === null) {
+                  alert("이름은 필수정보입니다. 정보제공을 동의해주세요.");
                   naverLogin.reprompt();
                   return;
                 }
-
-                alert(email + name); //for debugging
-
-                this.redirect();
               } else {
                 console.log("callback 처리에 실패하였습니다.");
               }
             });
           });
-
         }
       }
     },
@@ -86,6 +78,10 @@
       script.onload = () => this.initiate(this)
       document.body.appendChild(script)
     },
+    created() {
+
+
+    }
   }
   function getUrlParams() {
     var params = {};
