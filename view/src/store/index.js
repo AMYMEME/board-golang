@@ -29,7 +29,7 @@ export default new Vuex.Store({
       state.accessToken = null
       delete localStorage.accessToken
       alert('로그아웃이 완료되었습니다')
-    }
+    },
   },
   actions: {
       loginWithGoogle ({commit}, {authCode}) {
@@ -45,12 +45,12 @@ export default new Vuex.Store({
                  alert('에러가 발생했습니다: ' + err + '\n다시 시도해 주세요.')
              })
       },
-      loginWithNaver ({commit}, {authCode}) {
+      loginWithNaver ({commit}, {params}) {
           return axios.post(`${backEndHost}/auth/naver`, {
-              access_token: this.params.access_token,
-              state: this.params.state,
-              token_type: this.params.token_type,
-              expires_in: this.params.expires_in
+              access_token: params.access_token,
+              state: params.state,
+              token_type: params.token_type,
+              expires_in: params.expires_in
           })
               .then((res) => {
                   axios.defaults.headers.common['Authorization'] = `Bearer ${res.data}`;

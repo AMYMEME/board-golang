@@ -6,7 +6,7 @@
         <b-row class="justify-content-sm-center mt-5">
 
         <b-card class="col-sm-6">
-          <b-button pill block variant="outline-danger" @click="loginWithGoogle" >
+          <b-button v-if="this.$gAuth" pill block variant="outline-danger" @click="loginWithGoogle" >
             Login with Google</b-button>
           <div id="naverIdLogin" class="mt-4"></div>
         </b-card>
@@ -21,7 +21,7 @@
     name: 'test',
     data() {
       return {
-        initiate: (comp) => {
+        initiate: () => {
           const naverLogin = new naver.LoginWithNaverId(
                   {
                     clientId: `_HXiSkrZSfB9vq94TsZC`,
@@ -38,10 +38,9 @@
               if (status) {
                 var name = naverLogin.user.getNickName();
 
-                if (name === undefined || naver === null) {
+                if (name === undefined || name === null) {
                   alert("이름은 필수정보입니다. 정보제공을 동의해주세요.");
                   naverLogin.reprompt();
-                  return;
                 }
               } else {
                 console.log("callback 처리에 실패하였습니다.");
@@ -78,10 +77,6 @@
       script.onload = () => this.initiate(this)
       document.body.appendChild(script)
     },
-    created() {
-
-
-    }
   }
   function getUrlParams() {
     var params = {};
