@@ -3,43 +3,23 @@ package api
 import (
 	"net/http"
 
-	"github.com/dgrijalva/jwt-go"
-
 	"github.com/AMYMEME/board-golang/auth"
 	"github.com/AMYMEME/board-golang/model"
 	"github.com/gin-gonic/gin"
 	"github.com/pkg/errors"
 )
 
-func createToken(member model.Member) (string, error) {
-	mySigningKey := []byte("board-golang")
-
-	type MyCustomClaims struct {
-		ID   int    `json:"id"`
-		Name string `json:"name"`
-		jwt.StandardClaims
-	}
-
-	// Create the Claims
-	claims := MyCustomClaims{
-		member.ID,
-		member.Name,
-		jwt.StandardClaims{
-			ExpiresAt: 15000,
-			Issuer:    "board-golang",
-		},
-	}
-
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	return token.SignedString(mySigningKey)
-}
-
 func userInfoLogic(userInfo model.UserInfo) (string, error) {
 	if err := connectionCheck(DB.MyDB); err != nil {
 		return "", err
 	}
 
-	if DB.CheckProviderInfoExists(userInfo.Provider, userInfo.Email) {
+	result, err := DB.CheckProviderInfoExists(userInfo.Provider, userInfo.Email)
+	if err != nil {
+		return "", err
+	}
+
+	if result {
 		// exist => getUser
 		ID, err := DB.GetProviderInfo(userInfo.Provider, userInfo.Email)
 		if err != nil {
@@ -50,7 +30,7 @@ func userInfoLogic(userInfo model.UserInfo) (string, error) {
 			return "", err
 		}
 
-		token, err := createToken(member)
+		token, err := auth.CreateToken(member)
 		if err != nil {
 			return "", err
 		}
@@ -76,7 +56,7 @@ func userInfoLogic(userInfo model.UserInfo) (string, error) {
 		return "", err
 	}
 
-	token, err := createToken(member)
+	token, err := auth.CreateToken(member)
 	if err != nil {
 		return "", err
 	}
@@ -102,7 +82,6 @@ func AuthGoogle(c *gin.Context) {
 		return
 	}
 
-	googleUserInfo.Provider = "google"
 	token, err := userInfoLogic(googleUserInfo)
 
 	if err != nil {

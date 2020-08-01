@@ -2,7 +2,6 @@ package auth
 
 import (
 	"encoding/json"
-	"io/ioutil"
 
 	"github.com/AMYMEME/board-golang/model"
 
@@ -43,19 +42,11 @@ func GoogleAuth(authCode string) (model.UserInfo, error) {
 	}
 	defer userInfoResp.Body.Close()
 
-	userInfo, err := ioutil.ReadAll(userInfoResp.Body)
-
-	if err != nil {
-		err := errors.Wrap(err, "Fail reading user information response body")
-		return model.UserInfo{}, err
-	}
-
 	var googleUserInfo model.UserInfo
-
-	if err := json.Unmarshal(userInfo, &googleUserInfo); err != nil {
-		err := errors.Wrap(err, "Fail user information into binding")
+	if err := json.NewDecoder(userInfoResp.Body).Decode(&googleUserInfo); err != nil {
+		err := errors.Wrap(err, "Fail binding HTTP response from google API")
 		return model.UserInfo{}, err
 	}
 
-	return googleUserInfo, nil
+	return model.UserInfo{Provider: "google", Name: googleUserInfo.Name, Email: googleUserInfo.Email}, nil
 }
