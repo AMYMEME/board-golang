@@ -5,7 +5,7 @@ import Login from '../components/page/Login.vue'
 import Posts from "../components/page/Posts.vue"
 import NewPost from "../components/page/NewPost.vue"
 import UpdatePost from "../components/page/UpdatePost.vue"
-import AuthNaver from "../components/page/AuthNaver.vue"
+import NaverCallBack from "../components/page/NaverCallBack.vue"
 import Post from "../components/page/Post.vue"
 import store from '../store'
 
@@ -53,8 +53,8 @@ const requireAuth = () => (from, to, next) => {
   },
   {
     path: '/auth/naver',
-    name: 'AuthNaver',
-    component: AuthNaver
+    name: 'NaverCallBack',
+    component: NaverCallBack
   }
 ]
 

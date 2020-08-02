@@ -45,12 +45,10 @@ export default new Vuex.Store({
                  alert('에러가 발생했습니다: ' + err + '\n다시 시도해 주세요.')
              })
       },
-      loginWithNaver ({commit}, {params}) {
+      loginWithNaver ({commit}, result) {
           return axios.post(`${backEndHost}/auth/naver`, {
-              access_token: params.access_token,
-              state: params.state,
-              token_type: params.token_type,
-              expires_in: params.expires_in
+              name: result.name,
+              uniq_id: result.uniqId
           })
               .then((res) => {
                   axios.defaults.headers.common['Authorization'] = `Bearer ${res.data}`;
