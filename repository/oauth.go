@@ -1,6 +1,8 @@
 package repository
 
 import (
+	"fmt"
+
 	"github.com/AMYMEME/board-golang/model"
 	"github.com/pkg/errors"
 )
@@ -33,12 +35,23 @@ func (d *DBConfig) GetProviderInfo(provider string, providerID string) (int, err
 	return ID, nil
 }
 
-func (d *DBConfig) CheckProviderInfoExists(provider string, providerID string) bool {
-	err := d.MyDB.QueryRow("SELECT 1 FROM board.oauth WHERE provider = ? AND provider_id = ?", provider, providerID).
-		Scan()
+func (d *DBConfig) CheckProviderInfoExists(provider string, providerID string) (bool, error) {
+	var result int
+	err := d.MyDB.QueryRow("SELECT EXISTS (SELECT * FROM board.oauth WHERE provider = ? AND provider_id = ?) AS SUCCESS", provider, providerID).
+		Scan(&result)
 
 	if err != nil {
-		return false
+		err := errors.Wrap(err, "Fail sql query by Invalid Input")
+		return false, err
 	}
-	return true
+	fmt.Println("result : ", result)
+	switch result {
+	case 0:
+		return false, nil
+	case 1:
+		return true, nil
+	default:
+		err := errors.Wrap(err, "Fail sql query by Invalid Input")
+		return false, err
+	}
 }

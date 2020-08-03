@@ -1,11 +1,17 @@
 package model
 
-type Google struct {
+type GoogleAuth struct {
 	Code        string `json:"code"`
 	RedirectURI string `json:"redirect_uri"`
 }
 
-type GoogleUserInfo struct {
-	Name  string `json:"name"`
-	Email string `json:"email"`
+type UserInfo struct {
+	Provider string `json:"provider"`
+	Name     string `json:"name"`
+	Email    string `json:"email"`
+}
+
+type NaverAuth struct {
+	Name   string `json:"name"`
+	UniqID string `json:"uniq_id"`
 }

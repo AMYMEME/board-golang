@@ -29,25 +29,38 @@ export default new Vuex.Store({
       state.accessToken = null
       delete localStorage.accessToken
       alert('로그아웃이 완료되었습니다')
-    }
+    },
   },
   actions: {
-    loginWithGoogle ({commit}, {authCode}) {
-     return axios.post(`${backEndHost}/auth/google`, {
-        code: authCode,
-        redirect_uri: 'postmessage'
-      })
-            .then((res) => {
-              axios.defaults.headers.common['Authorization'] = `Bearer ${res.data}`;
-              commit('login', res.data)
-            })
-            .catch(err => {
-              alert('에러가 발생했습니다: ' + err + '\n다시 시도해 주세요.')
-            })
-    },
-    logout ({commit}) {
-      axios.defaults.headers.common['Authorization'] = undefined
-      commit('logout')
-    },
+      loginWithGoogle ({commit}, {authCode}) {
+         return axios.post(`${backEndHost}/auth/google`, {
+            code: authCode,
+            redirect_uri: 'postmessage'
+         })
+             .then((res) => {
+                 axios.defaults.headers.common['Authorization'] = `Bearer ${res.data}`;
+                 commit('login', res.data)
+             })
+             .catch(err => {
+                 alert('에러가 발생했습니다: ' + err + '\n다시 시도해 주세요.')
+             })
+      },
+      loginWithNaver ({commit}, result) {
+          return axios.post(`${backEndHost}/auth/naver`, {
+              name: result.name,
+              uniq_id: result.uniqId
+          })
+              .then((res) => {
+                  axios.defaults.headers.common['Authorization'] = `Bearer ${res.data}`;
+                  commit('login', res.data)
+              })
+              .catch(err => {
+                  alert('에러가 발생했습니다: ' + err + '\n다시 시도해 주세요.')
+              })
+      },
+      logout ({commit}) {
+          axios.defaults.headers.common['Authorization'] = undefined
+          commit('logout')
+      },
   }
 })

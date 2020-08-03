@@ -6,19 +6,24 @@ import (
 	"github.com/pkg/errors"
 )
 
-func (d *DBConfig) AddMember(autoID int, name string) (int, error) {
+func (d *DBConfig) AddMember(autoID int, name string) error {
 	res, err := d.MyDB.Exec("INSERT INTO board.member (id, name, level) VALUES (?, ?, ?)", autoID, name, 0)
 	if err != nil {
 		err := errors.Wrap(err, "Fail sql query by Invalid Input")
-		return 0, err
+		return err
 	}
 
-	ID, err := res.LastInsertId()
+	num, err := res.RowsAffected()
 	if err != nil {
-		err := errors.Wrap(err, "Fail getting added row's id")
-		return 0, err
+		err := errors.Wrap(err, "Fail getting how many row's affected")
+		return err
 	}
-	return int(ID), nil
+
+	if num != 1 {
+		err := errors.New("Fail DB insert")
+		return err
+	}
+	return nil
 }
 
 func (d *DBConfig) GetAllMembers() ([]model.Member, error) {

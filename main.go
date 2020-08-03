@@ -33,11 +33,10 @@ func setupRouter() *gin.Engine {
 		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"},
 		ExposeHeaders:    []string{"Content-Length"},
 		AllowCredentials: true,
-		MaxAge:           12 * time.Hour,
+		MaxAge:           1 * time.Hour,
 	}))
 
 	r.GET("/members", api.GetAllMembers)
-	r.POST("/member", api.AddMember)
 	r.GET("/member/:id", api.GetMember)
 	r.DELETE("/member/:id", api.DeleteMember)
 	r.PUT("/member/:id", api.UpdateMember)
@@ -56,6 +55,7 @@ func setupRouter() *gin.Engine {
 
 	//for auth
 	r.POST("/auth/google", api.AuthGoogle)
+	r.POST("/auth/naver", api.AuthNaver)
 
 	return r
 }

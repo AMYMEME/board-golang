@@ -8,9 +8,9 @@ import (
 	"github.com/pkg/errors"
 )
 
-func (d *DBConfig) AddComment(comment model.Comment) error {
+func (d *DBConfig) AddComment(postID int, comment model.Comment) error {
 	_, err := d.MyDB.Exec("INSERT INTO board.comment (post_id, member_id, contents, datetime) VALUES (?, ?, ?, ?)",
-		comment.PostID, comment.MemberID, comment.Contents, time.Now().Format("2006-01-02 15:04:05"))
+		postID, comment.MemberID, comment.Contents, time.Now().Format("2006-01-02 15:04:05"))
 	if err != nil {
 		err := errors.Wrap(err, "Fail sql query by Invalid Input")
 		return err
