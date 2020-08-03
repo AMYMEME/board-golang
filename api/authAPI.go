@@ -104,6 +104,13 @@ func AuthNaver(c *gin.Context) {
 
 	logger.Infow("REQUEST", "method", http.MethodPost, "url", c.Request.URL, "body", request)
 
+	if request.Name == "" {
+		err := errors.New("user name is necessary")
+		logger.Errorw("ERROR", "body", err.Error(), "status_code", http.StatusUnauthorized)
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
 	naverUserInfo := model.UserInfo{Provider: "naver", Name: request.Name, Email: request.UniqID}
 	token, err := userInfoLogic(naverUserInfo)
 

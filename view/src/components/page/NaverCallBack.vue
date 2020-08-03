@@ -38,8 +38,12 @@
 
           naverLogin.getLoginStatus((status) => {
             if (status) {
+              var name = naverLogin.user.getName();
+              if (name===undefined || name === null) {
+                return;
+              }
               var result = {}
-              result['name'] = naverLogin.user.getName()
+              result['name'] = name;
               result['uniqId'] = naverLogin.user.getId();
               store.dispatch('loginWithNaver', result)
                       .then(() => {
