@@ -58,6 +58,19 @@ export default new Vuex.Store({
                   alert('에러가 발생했습니다: ' + err + '\n다시 시도해 주세요.')
               })
       },
+      loginWithKakao ({commit}, result) {
+          return axios.post(`${backEndHost}/auth/kakao`, {
+              name: result.name,
+              uniq_id: result.uniqId
+          })
+              .then((res) => {
+                  axios.defaults.headers.common['Authorization'] = `Bearer ${res.data}`;
+                  commit('login', res.data)
+              })
+              .catch(err => {
+                  alert('에러가 발생했습니다: ' + err + '\n다시 시도해 주세요.')
+              })
+      },
       logout ({commit}) {
           axios.defaults.headers.common['Authorization'] = undefined
           commit('logout')

@@ -6,6 +6,7 @@ import Posts from "../components/page/Posts.vue"
 import NewPost from "../components/page/NewPost.vue"
 import UpdatePost from "../components/page/UpdatePost.vue"
 import NaverCallBack from "../components/page/NaverCallBack.vue"
+import KakaoCallBack from "../components/page/KakaoCallBack.vue"
 import Post from "../components/page/Post.vue"
 import store from '../store'
 
@@ -20,42 +21,47 @@ const requireAuth = () => (from, to, next) => {
 }
 
   const routes = [
-  {
-    path: '/',
-    name: 'Home',
-    component: Home
-  },
-  {
-    path: '/login',
-    name: 'Login',
-    component: Login
-  },
-  {
-    path: '/posts',
-    name: 'Posts',
-    component: Posts
-  },
-  {
-    path: '/new/post',
-    name: 'NewPost',
-    component: NewPost,
-    beforeEnter: requireAuth()
-  },
-  {
-    path: '/post/:id/update',
-    name: 'UpdatePost',
-    component: UpdatePost
-  },
-  {
-    path: '/post/:id',
-    name: 'Post',
-    component: Post
-  },
-  {
-    path: '/auth/naver',
-    name: 'NaverCallBack',
-    component: NaverCallBack
-  }
+    {
+      path: '/',
+      name: 'Home',
+      component: Home
+    },
+    {
+      path: '/login',
+      name: 'Login',
+      component: Login
+    },
+    {
+      path: '/posts',
+      name: 'Posts',
+      component: Posts
+    },
+    {
+      path: '/new/post',
+      name: 'NewPost',
+      component: NewPost,
+      beforeEnter: requireAuth()
+    },
+    {
+      path: '/post/:id/update',
+      name: 'UpdatePost',
+      component: UpdatePost
+    },
+    {
+      path: '/post/:id',
+      name: 'Post',
+      component: Post
+    },
+    {
+      path: '/auth/naver',
+      name: 'NaverCallBack',
+      component: NaverCallBack
+    },
+    {
+      path: '/auth/kakao',
+      name: 'KakaoCallBack',
+      component: KakaoCallBack
+    }
 ]
 
 const router = new VueRouter({
