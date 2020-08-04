@@ -9,6 +9,12 @@
           <b-button v-if="this.$gAuth" pill block variant="outline-danger" @click="loginWithGoogle" >
             Login with Google</b-button>
           <AuthNaver></AuthNaver>
+          <div id="kakaoLogin" class="mt-4">
+            <a type="button" href="https://kauth.kakao.com/oauth/authorize?client_id=f870f92ceeb2c80da32b754d287c046a&redirect_uri=http://localhost:8080/auth/kakao&response_type=code" >
+              <img src="//k.kakaocdn.net/14/dn/btqCn0WEmI3/nijroPfbpCa4at5EIsjyf0/o.jpg"
+                   width=230/>
+            </a>
+          </div>
         </b-card>
         </b-row>
       </div>

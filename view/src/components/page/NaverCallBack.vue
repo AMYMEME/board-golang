@@ -53,8 +53,6 @@
               console.log("AccessToken이 올바르지 않습니다.");
             }
           })
-
-
         }
       }
     },
