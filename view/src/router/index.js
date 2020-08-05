@@ -6,7 +6,6 @@ import Posts from "../components/page/Posts.vue"
 import NewPost from "../components/page/NewPost.vue"
 import UpdatePost from "../components/page/UpdatePost.vue"
 import NaverCallBack from "../components/page/NaverCallBack.vue"
-import KakaoCallBack from "../components/page/KakaoCallBack.vue"
 import Post from "../components/page/Post.vue"
 import store from '../store'
 
@@ -56,11 +55,6 @@ const requireAuth = () => (from, to, next) => {
       path: '/auth/naver',
       name: 'NaverCallBack',
       component: NaverCallBack
-    },
-    {
-      path: '/auth/kakao',
-      name: 'KakaoCallBack',
-      component: KakaoCallBack
     }
 ]
 
