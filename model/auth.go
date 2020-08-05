@@ -11,7 +11,7 @@ type UserInfo struct {
 	Email    string `json:"email"`
 }
 
-type NaverAuth struct {
+type NaverKakaoAuth struct {
 	Name   string `json:"name"`
 	UniqID string `json:"uniq_id"`
 }
