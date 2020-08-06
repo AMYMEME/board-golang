@@ -82,7 +82,7 @@ func AuthGoogle(c *gin.Context) {
 		return
 	}
 
-	googleUserInfo := model.UserInfo{Provider: "naver", Name: request.Name, Email: request.UniqID}
+	googleUserInfo := model.UserInfo{Provider: "google", Name: request.Name, Email: request.UniqID}
 	token, err := userInfoLogic(googleUserInfo)
 
 	if err != nil {
