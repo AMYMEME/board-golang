@@ -20,42 +20,42 @@ const requireAuth = () => (from, to, next) => {
 }
 
   const routes = [
-  {
-    path: '/',
-    name: 'Home',
-    component: Home
-  },
-  {
-    path: '/login',
-    name: 'Login',
-    component: Login
-  },
-  {
-    path: '/posts',
-    name: 'Posts',
-    component: Posts
-  },
-  {
-    path: '/new/post',
-    name: 'NewPost',
-    component: NewPost,
-    beforeEnter: requireAuth()
-  },
-  {
-    path: '/post/:id/update',
-    name: 'UpdatePost',
-    component: UpdatePost
-  },
-  {
-    path: '/post/:id',
-    name: 'Post',
-    component: Post
-  },
-  {
-    path: '/auth/naver',
-    name: 'NaverCallBack',
-    component: NaverCallBack
-  }
+    {
+      path: '/',
+      name: 'Home',
+      component: Home
+    },
+    {
+      path: '/login',
+      name: 'Login',
+      component: Login
+    },
+    {
+      path: '/posts',
+      name: 'Posts',
+      component: Posts
+    },
+    {
+      path: '/new/post',
+      name: 'NewPost',
+      component: NewPost,
+      beforeEnter: requireAuth()
+    },
+    {
+      path: '/post/:id/update',
+      name: 'UpdatePost',
+      component: UpdatePost
+    },
+    {
+      path: '/post/:id',
+      name: 'Post',
+      component: Post
+    },
+    {
+      path: '/auth/naver',
+      name: 'NaverCallBack',
+      component: NaverCallBack
+    }
 ]
 
 const router = new VueRouter({

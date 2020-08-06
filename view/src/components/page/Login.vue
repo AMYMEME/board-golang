@@ -9,6 +9,7 @@
           <b-button v-if="this.$gAuth" pill block variant="outline-danger" @click="loginWithGoogle" >
             Login with Google</b-button>
           <AuthNaver></AuthNaver>
+          <AuthKakao class="mt-4"></AuthKakao>
         </b-card>
         </b-row>
       </div>
@@ -18,10 +19,11 @@
 
 <script>
   import AuthNaver from "../AuthNaver";
+  import AuthKakao from "../AuthKakao";
 
   export default {
     name: 'test',
-    components: {AuthNaver},
+    components: {AuthKakao, AuthNaver},
     methods: {
       loginWithGoogle() {
         this.$gAuth.getAuthCode()
