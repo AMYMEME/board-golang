@@ -16,7 +16,7 @@
                             url: '/v2/user/me',
                             success: function (res) {
                                 store.dispatch('loginWithKakao', res)
-                                    .then(() =>  this.backRedirect())
+                                    .then(() =>  store.commit('backRedirect'))
                             },
                             fail: function () {
                                 alert('사용자 정보를 가져오는 데에 실패하였습니다. 다시 시도해 주세요.');
@@ -25,15 +25,6 @@
                         })
                     }
                 })
-            },
-            backRedirect() {
-                let redirectURI;
-                redirectURI = decodeURIComponent(getUrlParams().redirect);
-                if (redirectURI === 'undefined') {
-                    this.$router.push('/');
-                } else {
-                    this.$router.push(redirectURI)
-                }
             },
         },
         mounted() {
@@ -44,11 +35,6 @@
             })
             document.body.appendChild(script)
         }
-    }
-    function getUrlParams() {
-        var params = {};
-        window.location.search.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(str, key, value) { params[key] = value; });
-        return params;
     }
 </script>
 

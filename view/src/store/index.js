@@ -30,20 +30,30 @@ export default new Vuex.Store({
       delete localStorage.accessToken
       alert('로그아웃이 완료되었습니다')
     },
+    backRedirect() {
+      var params = {};
+      window.location.search.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(str, key, value) { params[key] = value; });
+      var redirectURI = decodeURIComponent(params.redirect);
+      if (redirectURI === 'undefined') {
+          location.replace('/');
+      } else {
+          location.replace(redirectURI);
+      }
+    },
   },
   actions: {
-      loginWithGoogle ({commit}, {authCode}) {
-         return axios.post(`${backEndHost}/auth/google`, {
-            code: authCode,
-            redirect_uri: 'postmessage'
-         })
-             .then((res) => {
-                 axios.defaults.headers.common['Authorization'] = `Bearer ${res.data}`;
-                 commit('login', res.data)
-             })
-             .catch(err => {
-                 alert('에러가 발생했습니다: ' + err + '\n다시 시도해 주세요.')
-             })
+      loginWithGoogle ({commit}, result) {
+          return axios.post(`${backEndHost}/auth/naver`, {
+              name: result.givenName,
+              uniq_id: result.metadata.source.id
+          })
+              .then((res) => {
+                  axios.defaults.headers.common['Authorization'] = `Bearer ${res.data}`;
+                  commit('login', res.data)
+              })
+              .catch(err => {
+                  alert('에러가 발생했습니다: ' + err + '\n다시 시도해 주세요.')
+              })
       },
       loginWithNaver ({commit}, result) {
           return axios.post(`${backEndHost}/auth/naver`, {
