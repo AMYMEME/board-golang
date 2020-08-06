@@ -4,11 +4,9 @@
     <b-container fluid>
       <div class="col-12">
         <b-row class="justify-content-sm-center mt-5">
-
         <b-card class="col-sm-6">
-          <b-button v-if="this.$gAuth" pill block variant="outline-danger" @click="loginWithGoogle" >
-            Login with Google</b-button>
-          <AuthNaver></AuthNaver>
+          <AuthGoogle></AuthGoogle>
+          <AuthNaver class="mt-4"></AuthNaver>
           <AuthKakao class="mt-4"></AuthKakao>
         </b-card>
         </b-row>
@@ -20,35 +18,18 @@
 <script>
   import AuthNaver from "../AuthNaver";
   import AuthKakao from "../AuthKakao";
+  import AuthGoogle from "../AuthGoogle";
 
   export default {
     name: 'test',
-    components: {AuthKakao, AuthNaver},
+    components: {AuthGoogle, AuthKakao, AuthNaver},
     methods: {
-      loginWithGoogle() {
-        this.$gAuth.getAuthCode()
-                .then(authCode => {
-                  this.$store.dispatch('loginWithGoogle', {authCode})
-                          .then(() => this.backRedirect())
-                })
-                .catch(() => {
-                  alert('인증 코드를 가져오는 데에 에러가 발생했습니다: \n다시 시도해 주세요.')
-                })
-      },
-      backRedirect() {
-        let redirectURI;
-        redirectURI = decodeURIComponent(getUrlParams().redirect);
-        if (redirectURI === 'undefined') {
-          this.$router.push('/');
-        } else {
-          this.$router.push(redirectURI)
-        }
-      },
+    },
+    mounted() {
+      if (this.$store.state.accessToken) {
+        alert('로그인이 완료되었습니다')
+        location.replace('/');
+      }
     }
-  }
-  function getUrlParams() {
-    var params = {};
-    window.location.search.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(str, key, value) { params[key] = value; });
-    return params;
   }
 </script>

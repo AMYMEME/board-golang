@@ -65,7 +65,7 @@ func userInfoLogic(userInfo model.UserInfo) (string, error) {
 }
 
 func AuthGoogle(c *gin.Context) {
-	var request model.GoogleAuth
+	var request model.ProviderInfo
 	if err := c.ShouldBindJSON(&request); err != nil {
 		logger.Infow("REQUEST", "method", http.MethodPost, "url", c.Request.URL)
 		logger.Errorw("ERROR", "body", errors.New("Fail request body bind").Error(), "status_code", http.StatusBadRequest)
@@ -75,13 +75,14 @@ func AuthGoogle(c *gin.Context) {
 
 	logger.Infow("REQUEST", "method", http.MethodPost, "url", c.Request.URL, "body", request)
 
-	googleUserInfo, err := auth.GoogleAuth(request.Code)
-	if err != nil {
+	if request.Name == "" {
+		err := errors.New("user name is necessary")
 		logger.Errorw("ERROR", "body", err.Error(), "status_code", http.StatusUnauthorized)
-		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
+	googleUserInfo := model.UserInfo{Provider: "naver", Name: request.Name, Email: request.UniqID}
 	token, err := userInfoLogic(googleUserInfo)
 
 	if err != nil {
@@ -89,12 +90,13 @@ func AuthGoogle(c *gin.Context) {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
 		return
 	}
+
 	logger.Infow("RESPONSE", "body", token, "status_code", http.StatusOK)
 	c.JSON(http.StatusOK, token)
 }
 
 func AuthNaver(c *gin.Context) {
-	var request model.NaverKakaoAuth
+	var request model.ProviderInfo
 	if err := c.ShouldBindJSON(&request); err != nil {
 		logger.Infow("REQUEST", "method", http.MethodPost, "url", c.Request.URL)
 		logger.Errorw("ERROR", "body", errors.New("Fail request body bind").Error(), "status_code", http.StatusBadRequest)
@@ -125,7 +127,7 @@ func AuthNaver(c *gin.Context) {
 }
 
 func AuthKakao(c *gin.Context) {
-	var request model.NaverKakaoAuth
+	var request model.ProviderInfo
 	if err := c.ShouldBindJSON(&request); err != nil {
 		logger.Infow("REQUEST", "method", http.MethodPost, "url", c.Request.URL)
 		logger.Errorw("ERROR", "body", errors.New("Fail request body bind").Error(), "status_code", http.StatusBadRequest)
