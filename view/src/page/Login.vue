@@ -16,9 +16,9 @@
 </template>
 
 <script>
-  import AuthNaver from "../AuthNaver";
-  import AuthKakao from "../AuthKakao";
-  import AuthGoogle from "../AuthGoogle";
+  import AuthNaver from "../components/auth/AuthNaver";
+  import AuthKakao from "../components/auth/AuthKakao";
+  import AuthGoogle from "../components/auth/AuthGoogle";
 
   export default {
     name: 'test',
