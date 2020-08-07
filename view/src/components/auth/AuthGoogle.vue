@@ -32,7 +32,7 @@
                         GoogleAuth = gapi.auth2.getAuthInstance();
                         var googleLoginBtn = document.getElementById('google-login-btn');
                         googleLoginBtn.addEventListener('click', function () {
-                            if (GoogleAuth.isSignedIn.get()) {
+                            GoogleAuth.isSignedIn.listen(() => {
                                 gapi.client.people.people.get({
                                     'resourceName': 'people/me',
                                     'requestMask.includeField': 'person.names'
@@ -40,11 +40,22 @@
                                     store.dispatch('loginWithGoogle', res.result.names[0])
                                         .then(() =>  store.commit('backRedirect'))
                                 })
-                            } else {
+                            });
+
+                            if (!GoogleAuth.isSignedIn.get()) {
                                 GoogleAuth.signIn();
+                            } else {
+                                gapi.client.people.people.get({
+                                    'resourceName': 'people/me',
+                                    'requestMask.includeField': 'person.names'
+                                }).then((res) => {
+                                    store.dispatch('loginWithGoogle', res.result.names[0])
+                                        .then(() =>  store.commit('backRedirect'))
+                                })
                             }
                         })
                     })
+                    .catch((err) => alert('현재 구글 로그인을 이용할 수 없습니다. 잠시 후에 다시 시도해 주세요.'+ err))
                 })
             },
         },
@@ -57,7 +68,6 @@
             document.body.appendChild(script)
         }
     }
-
 </script>
 
 <style scoped>

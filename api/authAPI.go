@@ -9,33 +9,33 @@ import (
 	"github.com/pkg/errors"
 )
 
-func userInfoLogic(userInfo model.UserInfo) (string, error) {
+func userInfoLogic(userInfo model.UserInfo) (int, string, error) {
 	if err := connectionCheck(DB.MyDB); err != nil {
-		return "", err
+		return 0, "", err
 	}
 
 	result, err := DB.CheckProviderInfoExists(userInfo.Provider, userInfo.Email)
 	if err != nil {
-		return "", err
+		return 0, "", err
 	}
 
 	if result {
 		// exist => getUser
 		ID, err := DB.GetProviderInfo(userInfo.Provider, userInfo.Email)
 		if err != nil {
-			return "", err
+			return 0, "", err
 		}
 		member, err := DB.GetMember(ID)
 		if err != nil {
-			return "", err
+			return 0, "", err
 		}
 
 		token, err := auth.CreateToken(member)
 		if err != nil {
-			return "", err
+			return 0, "", err
 		}
 
-		return token, nil
+		return ID, token, nil
 	}
 	// new register
 
@@ -44,24 +44,24 @@ func userInfoLogic(userInfo model.UserInfo) (string, error) {
 		ProviderID: userInfo.Email,
 	})
 	if err != nil {
-		return "", err
+		return 0, "", err
 	}
 
 	if err := DB.AddMember(ID, userInfo.Name); err != nil {
-		return "", err
+		return 0, "", err
 	}
 
 	member, err := DB.GetMember(ID)
 	if err != nil {
-		return "", err
+		return 0, "", err
 	}
 
 	token, err := auth.CreateToken(member)
 	if err != nil {
-		return "", err
+		return 0, "", err
 	}
 
-	return token, nil
+	return ID, token, nil
 }
 
 func AuthGoogle(c *gin.Context) {
@@ -83,7 +83,7 @@ func AuthGoogle(c *gin.Context) {
 	}
 
 	googleUserInfo := model.UserInfo{Provider: "google", Name: request.Name, Email: request.UniqID}
-	token, err := userInfoLogic(googleUserInfo)
+	ID, token, err := userInfoLogic(googleUserInfo)
 
 	if err != nil {
 		logger.Errorw("ERROR", "body", err.Error(), "status_code", http.StatusUnauthorized)
@@ -91,8 +91,8 @@ func AuthGoogle(c *gin.Context) {
 		return
 	}
 
-	logger.Infow("RESPONSE", "body", token, "status_code", http.StatusOK)
-	c.JSON(http.StatusOK, token)
+	logger.Infow("RESPONSE", "body", gin.H{"id": ID, "jwt": token}, "status_code", http.StatusOK)
+	c.JSON(http.StatusOK, gin.H{"id": ID, "jwt": token})
 }
 
 func AuthNaver(c *gin.Context) {
@@ -114,7 +114,7 @@ func AuthNaver(c *gin.Context) {
 	}
 
 	naverUserInfo := model.UserInfo{Provider: "naver", Name: request.Name, Email: request.UniqID}
-	token, err := userInfoLogic(naverUserInfo)
+	ID, token, err := userInfoLogic(naverUserInfo)
 
 	if err != nil {
 		logger.Errorw("ERROR", "body", err.Error(), "status_code", http.StatusUnauthorized)
@@ -122,8 +122,8 @@ func AuthNaver(c *gin.Context) {
 		return
 	}
 
-	logger.Infow("RESPONSE", "body", token, "status_code", http.StatusOK)
-	c.JSON(http.StatusOK, token)
+	logger.Infow("RESPONSE", "body", gin.H{"id": ID, "jwt": token}, "status_code", http.StatusOK)
+	c.JSON(http.StatusOK, gin.H{"id": ID, "jwt": token})
 }
 
 func AuthKakao(c *gin.Context) {
@@ -145,7 +145,7 @@ func AuthKakao(c *gin.Context) {
 	}
 
 	kakaoUserInfo := model.UserInfo{Provider: "kakao", Name: request.Name, Email: request.UniqID}
-	token, err := userInfoLogic(kakaoUserInfo)
+	ID, token, err := userInfoLogic(kakaoUserInfo)
 
 	if err != nil {
 		logger.Errorw("ERROR", "body", err.Error(), "status_code", http.StatusUnauthorized)
@@ -153,6 +153,6 @@ func AuthKakao(c *gin.Context) {
 		return
 	}
 
-	logger.Infow("RESPONSE", "body", token, "status_code", http.StatusOK)
-	c.JSON(http.StatusOK, token)
+	logger.Infow("RESPONSE", "body", gin.H{"id": ID, "jwt": token}, "status_code", http.StatusOK)
+	c.JSON(http.StatusOK, gin.H{"id": ID, "jwt": token})
 }
